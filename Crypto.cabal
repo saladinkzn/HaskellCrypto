@@ -1,0 +1,22 @@
+name:           Crypto
+version:        0.1
+cabal-version:  >= 1.2
+build-type:     Simple
+author:         Timur
+
+executable Crypto
+  hs-source-dirs:  src
+  main-is:         Gost.hs
+  build-depends:   
+                   base >= 4,
+                   haskell-src-exts,
+                   ghc,
+                   base
+  ghc-options:     -Wall
+  other-modules:   
+                   Feistel,
+                   DES,
+                   CryptoDSL,
+                   GostDSLBased,
+                   Analytics
+
