@@ -6,7 +6,6 @@ import Text.Show
 import GHC.Word
 
 -- Рабочий цикл схемы Фейстеля
--- TODO: вынести f в параметры
 -- i - кол-во шагов
 -- a - ai
 -- b - bi

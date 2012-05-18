@@ -3,7 +3,9 @@ import CryptoDSL
 import Data.Word
 
 
-
+-- Вычисляет шифр ГОСТ 28147-89, заданный с помощью функции f схемы Фейстеля и функции генерации раундового ключа
+-- input - Word64 - открытый текст
+-- key - [Word32] - 256-битный ключ, представленный в виде 8 32ух битных слов (от младших бит к старшим) 
 gost :: Word64 -> [Word32] -> Word64
 gost input key =
         encrypt input 32 gostF gostKeyAlgorithm key

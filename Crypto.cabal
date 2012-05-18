@@ -11,11 +11,11 @@ executable Crypto
                    base >= 4,
                    haskell-src-exts,
                    ghc,
-                   base
+                   base,
+                   random,
+                   time
   ghc-options:     -Wall
   other-modules:   
-                   Feistel,
-                   DES,
                    CryptoDSL,
                    GostDSLBased,
                    Analytics
