@@ -18,5 +18,6 @@ executable Crypto
   other-modules:   
                    CryptoDSL,
                    GostDSLBased,
-                   Analytics
+                   Analytics,
+                   FEAL
 
