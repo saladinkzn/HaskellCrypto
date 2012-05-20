@@ -19,6 +19,22 @@ fealInternal plainText key = encrypt plainText 4 fealF (\ k -> fealKeyAlgorithm 
         where 
                 fealF :: FeistelFunction
                 fealF = FeistelFunction [(CustomKey f)]
+
+fealOR :: Word64 -> [Word32] -> Word64
+fealOR plainText key = post (fealOneRoundIntegral (pre plainText) key)
+        where 
+                n = 4
+                keys = fealKeyAlgorithm key n
+                pre :: Word64 -> Word64
+                pre p = p + (foldl (+) 0 (zipWith (*) [keys !! (n+3), keys !! (n+2), keys !! (n+1), keys !! (n)] [(2^16)^i | i<-[0..3]]))
+                post :: Word64 -> Word64
+                post p = p + (foldl (+) 0 (zipWith (*) [keys !! (n+7), keys !! (n+6), keys !! (n+5), keys !! (n+4)] [(2^16)^i | i<-[0..3]]))
+                
+fealOneRoundIntegral :: Word64 -> [Word32] -> Word64
+fealOneRoundIntegral plainText key = encrypt plainText 2 fealF(\k -> fealKeyAlgorithm k 4) key
+        where 
+                fealF :: FeistelFunction
+                fealF = FeistelFunction [(CustomKey f)]
                 
 
 -- TODO : Rewrite monkeycoding

@@ -42,6 +42,15 @@ splitWord64 value = [if testBit value i then 1 else 0 | i <- [0..63]]
 increment :: ([Int], Int) -> [Int] -> ([Int], Int)
 increment (current, total) addition = (zipWith (+) current addition, total + 1)
 
+-- Вспомогательная функция для накопления информации о кол-во единичных бит в слове
+increment2 :: ([Int], Int) -> [Int] -> ([Int], Int)
+increment2 (current, total) addition = (zipWith (+) current (addition2 addition), total + 1)
+ 
+addition2 :: [Int] -> [Int]
+addition2 x  = [0|i<-[0..pos-1]]++[1]++[0|i<-[pos+1..64]]
+        where 
+        pos = foldl (+) 0 x 
+
 -- Анализирует вероятность появления 1 в каждой позиции зашифрованного текста
 -- TODO: вынести функцию шифрования в параметр 
 -- presetBits - массив, задающий фиксированные виды, пример: [-1,-1, ... , 1,1,1] - означает, что 3 старших бита имеют значение 1, а остальные имеют 
@@ -61,6 +70,21 @@ analyze presetBits randomNumbers prescision cypher = analyzeRounds prescision pr
                                                         where evalState :: [Int] -> [Int] -> [Int]
                                                               evalState preset random =
                                                                        splitWord64 ( cypher (aggregate (mask preset (splitWord64 (unite random)))) [0..7])
+                                                                       
+-- randomNumbers - бесконечный список случайных 32-х битных слов, используется для генерации случайных слов для шифрования
+-- prescision - точность (кол-во тестируемых случайных слов с зафиксированными битами)
+analyze2 :: [Int] -> [Int] -> Int -> (Word64 -> [Word32] -> Word64) -> ([Int], Int)
+analyze2 presetBits randomNumbers prescision cypher = analyzeRounds prescision presetBits randomNumbers ((take 65 (cycle [0])), 0)
+                        where analyzeRounds :: Int -> [Int] -> [Int] -> ([Int], Int)-> ([Int], Int)
+                              analyzeRounds 0 _ _ state = state
+                              analyzeRounds roundCount preset randoms state = 
+                                        analyzeRounds (roundCount - 1) preset (drop 2 randoms) (getState preset randoms state)
+                                        where getState :: [Int] -> [Int] -> ([Int], Int) ->  ([Int], Int)
+                                              getState preset random state = 
+                                                        increment2 state (evalState preset random)
+                                                        where evalState :: [Int] -> [Int] -> [Int]
+                                                              evalState preset random =
+                                                                       splitWord64 ( cypher (aggregate (mask preset (splitWord64 (unite random)))) [0..7])
                                                                        --where unite :: [Int] -> Word64
                                                                              --unite list = (shiftL (fromIntegral (list !! 0)) 32) .|. (fromIntegral (list !! 1))
 unite :: [Int] -> Word64
@@ -75,7 +99,17 @@ testAnalyze3 seed = analyze (genMask 31 32) (randoms (mkStdGen seed)) (10^4) (\ 
 testAnalyze5 seed = analyze ([-1|i<-[0..63]]) (randoms (mkStdGen seed)) (10^4) (\ p _ -> p )
 testAnalyze4 seed bit = analyze ([0|i<-[0..bit-1]] ++ [-1] ++ [1|i<-[(bit+1)..63]]) (randoms (mkStdGen seed)) (10^3) (\ p k -> feal p k 4)
 testAnalyze6 seed startBit stopBit = analyze (genMask startBit stopBit) (randoms (mkStdGen seed)) (10^4) (\ p k -> feal p k 4)
+testAnalyze61 seed startBit stopBit = analyze (genMask startBit stopBit) (randoms (mkStdGen seed)) (10^4) (\ p _ -> p )
+
+testAnalyze2_61 seed startBit stopBit = analyze2 (genMask startBit stopBit) (randoms (mkStdGen seed)) (10^4) (\ p _ -> p )
+testAnalyze2_6 seed startBit stopBit = analyze2 (genMask startBit stopBit) (randoms (mkStdGen seed)) (10^4) feal4
 --
+feal4 p k = feal p k 4
+
+testAnalyze7 seed = analyze ([-1|i<-[0..31]]++[0|i<-[32..63]]) (randoms (mkStdGen 0)) (10^4) feal4
+testAnalyze8 seed = analyze ([0|i<-[0..31]]++[-1|i<-[32..63]]) (randoms (mkStdGen 0)) (10^4) feal4
+--
+testAnalyze9 seed = analyze ([-1|i<-[0..31]]++[0|i<-[32..63]]) (randoms (mkStdGen 0)) (10^4) fealOR 
 testDep bit = checkBitDependency 0xAAAAAAAAAAAAAAAA bit (\ p k -> feal p k 4)
 
 -- Вспомогательная функция: преобразует частоты в вертояности
