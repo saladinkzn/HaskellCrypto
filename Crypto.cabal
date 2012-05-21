@@ -19,5 +19,6 @@ executable Crypto
                    CryptoDSL,
                    GostDSLBased,
                    Analytics,
-                   FEAL
+                   FEAL,
+                   FEALReformuled
 

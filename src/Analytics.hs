@@ -45,11 +45,11 @@ increment (current, total) addition = (zipWith (+) current addition, total + 1)
 -- Вспомогательная функция для накопления информации о кол-во единичных бит в слове
 increment2 :: ([Int], Int) -> [Int] -> ([Int], Int)
 increment2 (current, total) addition = (zipWith (+) current (addition2 addition), total + 1)
- 
-addition2 :: [Int] -> [Int]
-addition2 x  = [0|i<-[0..pos-1]]++[1]++[0|i<-[pos+1..64]]
-        where 
-        pos = foldl (+) 0 x 
+                        where
+                        addition2 :: [Int] -> [Int]
+                        addition2 x  = [0|i<-[0..pos-1]]++[1]++[0|i<-[pos+1..64]]
+                                where 
+                                pos = foldl (+) 0 x 
 
 -- Анализирует вероятность появления 1 в каждой позиции зашифрованного текста
 -- TODO: вынести функцию шифрования в параметр 

@@ -113,21 +113,21 @@ fealKeyAlgorithmWorker n kl kr result = fealKeyAlgorithmWorker (n - 1) kr (fk kr
                                         fk1 = fromIntegral (fk kl kr)
                                         fk2 :: Word64
                                         fk2 = fromIntegral (fk kr (fromIntegral fk1 + kl))
-                                        fk :: Word32 -> Word32 -> Word32
-                                        fk x y = foldl (+) 0 (zipWith (*) [fromIntegral t | t <- [fk3, fk2, fk1, fk0]] [256^i | i <-[0..3]])
-                                                        where   
-                                                                t1 :: Word8
-                                                                t1 = xor (_x !! 0) (_x !! 1)
-                                                                t2 :: Word8
-                                                                t2 = xor (_x !! 2) (_x !! 3)
-                                                                
-                                                                fk1 = s1 t1 (xor t2 (_y !! 0))
-                                                                fk2 = s0 t2 (xor fk1 (_y !! 1))
-                                                                fk0 = s0 (_x !! 0) (xor fk1 (_y !! 2))
-                                                                fk3 = s1 (_x !! 3) (xor fk2 (_y !! 3))
-                                                                _x :: [Word8]
-                                                                _x = [fromIntegral t | t <- [shiftR x i .&. 0xFF | i <- [0,8,16,24]]]
-                                                                _y :: [Word8]
-                                                                _y = [fromIntegral t | t <- [shiftR y i .&. 0xFF | i <- [0,8,16,24]]]
+fk :: Word32 -> Word32 -> Word32
+fk x y = foldl (+) 0 (zipWith (*) [fromIntegral t | t <- [fk3, fk2, fk1, fk0]] [256^i | i <-[0..3]])
+                where   
+                        t1 :: Word8
+                        t1 = xor (_x !! 0) (_x !! 1)
+                        t2 :: Word8
+                        t2 = xor (_x !! 2) (_x !! 3)
+                        
+                        fk1 = s1 t1 (xor t2 (_y !! 0))
+                        fk2 = s0 t2 (xor fk1 (_y !! 1))
+                        fk0 = s0 (_x !! 0) (xor fk1 (_y !! 2))
+                        fk3 = s1 (_x !! 3) (xor fk2 (_y !! 3))
+                        _x :: [Word8]
+                        _x = [fromIntegral t | t <- [shiftR x i .&. 0xFF | i <- [0,8,16,24]]]
+                        _y :: [Word8]
+                        _y = [fromIntegral t | t <- [shiftR y i .&. 0xFF | i <- [0,8,16,24]]]
                                       
                                 
