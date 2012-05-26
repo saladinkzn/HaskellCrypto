@@ -1,5 +1,4 @@
 module DifferencialCryptoanalisys where
-import FEALReformuled
 import System.Random
 import Data.Bits
 import Data.List
@@ -24,7 +23,7 @@ analyzeSurvey diff g' proximity = [(x, (fromIntegral (count x survey)) / (fromIn
 -- Возвращает максимальную вероятность появления какого-либо выходного дифференциала 
 maxPossibility surveyAnalysis = maximum [b|(a,b) <- surveyAnalysis]
 
-analyzeWeaknesses = maximum [maxPossibility x | x <- [analyzeSurvey i g 1000 | i <- [0..(2^6)-1]]] 
+-- analyzeWeaknesses = maximum [maxPossibility x | x <- [analyzeSurvey i g 1000 | i <- [0..(2^6)-1]]] 
 
 count :: Word32 -> [Word32]-> Int
 count x list =  countHelper x list 0

@@ -23,16 +23,18 @@ data Operator =
                 -- (по одному на каждый блок разбиения)
                 SBlocks Int [[Word32]] |
                 -- Позволяет выполнить произвольную функцию, заданную на языке Haskell, параметром которого будет являться текущее значения вычисляемой функции
-                Custom (Word32 -> Word32) |
+--                Custom (Word32 -> Word32) |
                 -- Позволяет выполнить произвольную функцию, заданную на языке Haskell, вторым параметром которой яв-ся раундовый ключ k.
-                CustomKey (Word32 -> Word32 -> Word32) |
+--                CustomKey (Word32 -> Word32 -> Word32) |
                 -- Означает, что на данном шаге нужно к текущему значению прибавить значения раундового ключа по модулю 2
                 XorKey |
                 -- Означает, что на данном шаге нужно к текущему значению прибавить значения раундового ключа по модулю 2^32
-                SumKey
+                SumKey 
+        deriving (Show, Read)
 
 -- FeistelFunction реализует способ задания функции f в схеме Фейстеля через набор операторов
 data FeistelFunction = FeistelFunction [Operator]  
+        deriving (Show, Read)
 
 -- Вспомогательная функция, приводящаю функцию f к необходимой сигнатуре
 wrapF :: (Word32 -> Word32 -> Word32) -> (Word32 -> Word64 -> Word32)
@@ -45,7 +47,7 @@ parseF (FeistelFunction operators) =
         where
                 superposition :: (Word32 -> Word32 -> Word32) -> Operator -> (Word32->Word32->Word32)
                 superposition f XorKey = \ a k -> xor (f a k) k
-                superposition f (CustomKey g) = \ a k -> g (f a k) k
+--                superposition f (CustomKey g) = \ a k -> g (f a k) k
                 superposition f SumKey = \ a k -> (f a k) + k 
                 superposition f g = \ a k -> evalOp (f a k) g  
                 same :: Word32 -> Word32 -> Word32 
@@ -58,7 +60,7 @@ evalOp arg1 (RotateR arg2) = rotateR arg1 arg2
 evalOp arg1 (PBlock arg2) = evalPBlock arg1 arg2
 evalOp arg1 (SBlock numOfParts sblock) = evalSBlock arg1 numOfParts sblock
 evalOp arg1 (SBlocks numOfParts sblocks) = evalSBlocks arg1 numOfParts sblocks
-evalOp arg1 (Custom function) = function arg1
+-- evalOp arg1 (Custom function) = function arg1
 evalOp _ _ = undefined
 
 -- TODO: throw exception if length of pblock \= 32

@@ -6,7 +6,7 @@ author:         Timur
 
 executable Crypto
   hs-source-dirs:  src
-  main-is:         Gost.hs
+  main-is:         Main.hs
   build-depends:   
                    base >= 4,
                    haskell-src-exts,
@@ -19,6 +19,6 @@ executable Crypto
                    CryptoDSL,
                    GostDSLBased,
                    Analytics,
-                   FEAL,
-                   FEALReformuled
+                   DifferencialCryptoanalisys,
+                   Main
 
